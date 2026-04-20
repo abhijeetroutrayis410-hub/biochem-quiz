@@ -54,7 +54,16 @@ margin-top:20px;
 </style>
 </head>
 
-<body>
+<body<body>
+
+<div id="loginBox">
+<h2>Enter Candidate Name</h2>
+<input id="studentName" placeholder="Your name">
+<br><br>
+<button onclick="startExam()">Start Exam</button>
+</div>
+
+<div id="examArea" style="display:none;">
 
 <div class="top">
 <h1>Biochemistry CBT Mock</h1>
@@ -263,5 +272,26 @@ renderQ();
 
 </script>
 
-</body>
+</div>
+
+<script>
+function startExam(){
+
+let name=document.getElementById('studentName').value;
+
+if(name==""){
+alert("Enter your name");
+return;
+}
+
+document.getElementById('loginBox').style.display='none';
+document.getElementById('examArea').style.display='block';
+
+document.querySelector('h1').innerHTML=
+'Biochemistry CBT Mock<br><small>Candidate: '+name+'</small>';
+
+}
+</script>
+
+</bod</body>
 </html>
