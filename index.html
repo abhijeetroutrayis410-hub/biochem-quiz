@@ -1,7 +1,267 @@
 <!DOCTYPE html>
 <html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Biochemistry CBT Mock Test</title>
+
+<style>
+body{
+font-family:Arial;
+max-width:900px;
+margin:auto;
+padding:20px;
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.palette button{
+width:42px;
+height:42px;
+margin:4px;
+border-radius:12px;
+}
+
+.answered{
+font-weight:bold;
+}
+
+.box{
+border:1px solid #ccc;
+padding:18px;
+border-radius:18px;
+margin-top:20px;
+}
+
+.opt{
+display:block;
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:12px;
+border:1px solid #999;
+background:#fff;
+}
+
+.nav{
+display:flex;
+gap:10px;
+margin-top:20px;
+}
+</style>
+</head>
+
 <body>
-<h1>My Quiz Website Works</h1>
-<p>First GitHub Pages test.</p>
+
+<div class="top">
+<h1>Biochemistry CBT Mock</h1>
+<h2 id="timer">20:00</h2>
+</div>
+
+<div class="palette" id="palette"></div>
+
+<div class="box">
+
+<h3 id="qtext"></h3>
+
+<div id="opts"></div>
+
+<div class="nav">
+<button onclick="prevQ()">Previous</button>
+<button onclick="nextQ()">Next</button>
+<button onclick="submitExam()">Submit Exam</button>
+</div>
+
+</div>
+
+<div id="result"></div>
+
+<script>
+
+const qs=[
+
+{
+q:'Rate-limiting enzyme of glycolysis?',
+o:[
+'Hexokinase',
+'PFK-1',
+'Pyruvate kinase',
+'Aldolase'
+],
+a:1
+},
+
+{
+q:'Final electron acceptor in ETC?',
+o:[
+'NADH',
+'Oxygen',
+'FADH2',
+'Cytochrome c'
+],
+a:1
+},
+
+{
+q:'Uncoupler?',
+o:[
+'Cyanide',
+'Rotenone',
+'2,4-DNP',
+'Malonate'
+],
+a:2
+},
+
+{
+q:'Purine end product?',
+o:[
+'Urea',
+'Uric acid',
+'Creatinine',
+'Bilirubin'
+],
+a:1
+}
+
+];
+
+let idx=0;
+
+let ans=Array(qs.length).fill(null);
+
+function renderPalette(){
+
+let h='';
+
+qs.forEach((q,i)=>{
+
+h+=`
+<button
+id="p${i}"
+onclick="goQ(${i})"
+class="${ans[i]!=null?'answered':''}">
+${i+1}
+</button>
+`;
+
+});
+
+document.getElementById('palette').innerHTML=h;
+
+}
+
+function renderQ(){
+
+document.getElementById('qtext').innerText=
+(idx+1)+'. '+qs[idx].q;
+
+let h='';
+
+qs[idx].o.forEach((v,j)=>{
+
+h+=`
+<button
+class="opt"
+onclick="pick(${j})">
+${String.fromCharCode(65+j)}. ${v}
+${ans[idx]===j?'✓':''}
+</button>
+`;
+
+});
+
+document.getElementById('opts').innerHTML=h;
+
+renderPalette();
+
+}
+
+function pick(j){
+
+ans[idx]=j;
+
+renderQ();
+
+}
+
+function nextQ(){
+
+if(idx<qs.length-1)
+idx++;
+
+renderQ();
+
+}
+
+function prevQ(){
+
+if(idx>0)
+idx--;
+
+renderQ();
+
+}
+
+function goQ(i){
+
+idx=i;
+
+renderQ();
+
+}
+
+function submitExam(){
+
+let score=0;
+
+ans.forEach((v,i)=>{
+
+if(v===qs[i].a)
+score++;
+
+});
+
+document.getElementById('result').innerHTML=
+'<h2>Score: '
++score+
+'/'
++qs.length+
+'</h2>';
+
+}
+
+let t=1200;
+
+setInterval(()=>{
+
+if(t<=0){
+
+submitExam();
+
+return;
+
+}
+
+t--;
+
+let m=Math.floor(t/60);
+
+let s=t%60;
+
+document.getElementById('timer').innerText=
+(m<10?'0':'')+m+
+':'+
+(s<10?'0':'')+s;
+
+},1000);
+
+renderQ();
+
+</script>
+
 </body>
 </html>
