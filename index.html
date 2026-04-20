@@ -2,155 +2,85 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Advanced Biochemistry CBT</title>
+<title>Biochemistry CBT Final</title>
 
 <style>
 body{
-font-family:Segoe UI, Arial;
-max-width:950px;
+font-family:Segoe UI;
+max-width:900px;
 margin:auto;
 padding:20px;
-background:linear-gradient(135deg,#eef2ff,#e8f0ff);
+background:linear-gradient(135deg,#eef2ff,#e6f0ff);
 }
 
-/* LOGIN */
 #loginBox{
 background:white;
-padding:25px;
-border-radius:16px;
+padding:20px;
+border-radius:14px;
 text-align:center;
-box-shadow:0 10px 25px rgba(0,0,0,0.1);
+box-shadow:0 8px 20px rgba(0,0,0,0.1);
 }
 
-/* HEADER */
 .top{
 display:flex;
 justify-content:space-between;
 align-items:center;
 background:white;
-padding:12px 18px;
-border-radius:14px;
-box-shadow:0 6px 18px rgba(0,0,0,0.08);
+padding:12px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
 }
 
-h1{
-color:#2b4eff;
-margin:0;
-}
-
-/* TIMER */
 #timer{
-padding:8px 14px;
-border-radius:10px;
-font-weight:bold;
 background:#2b4eff;
 color:white;
-transition:0.3s;
+padding:8px 12px;
+border-radius:10px;
+font-weight:bold;
 }
 
-/* WARNING TIMER */
-.warn{
-background:#ff3b3b !important;
-}
-
-/* BOX */
 .box{
 background:white;
-padding:20px;
-border-radius:16px;
 margin-top:20px;
-box-shadow:0 8px 20px rgba(0,0,0,0.08);
+padding:20px;
+border-radius:14px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
 }
 
-#qtext{
-font-size:18px;
-font-weight:600;
-}
-
-/* OPTIONS */
 .opt{
 display:block;
 width:100%;
 padding:12px;
 margin:8px 0;
 border-radius:10px;
-border:2px solid #ddd;
+border:1px solid #ccc;
 cursor:pointer;
 background:white;
-transition:0.2s;
 }
 
-.opt:hover{
-border-color:#2b4eff;
-background:#f3f7ff;
-}
-
-.selected{
-background:#dbe7ff !important;
-border-color:#2b4eff !important;
-}
-
-/* NAV */
-.nav{
-display:flex;
-gap:10px;
-margin-top:15px;
-flex-wrap:wrap;
-}
+.opt:hover{background:#f3f7ff}
 
 .nav button{
-padding:10px 14px;
+margin:5px;
+padding:10px 12px;
 border:none;
-border-radius:10px;
+border-radius:8px;
 background:#2b4eff;
 color:white;
 cursor:pointer;
-font-weight:600;
-}
-
-.nav button:hover{
-background:#1f39c8;
-}
-
-/* PALETTE */
-.palette{
-display:flex;
-flex-wrap:wrap;
-gap:6px;
-margin-top:15px;
 }
 
 .palette button{
-width:40px;
-height:40px;
-border-radius:10px;
+width:38px;
+height:38px;
+margin:4px;
+border-radius:8px;
 border:none;
+background:#ddd;
 cursor:pointer;
-font-weight:bold;
 }
 
-/* STATUS COLORS */
-.notvisited{ background:#e0e0e0; }
-.visited{ background:#ffd966; }
-.answered{ background:#4caf50; color:white; }
-.marked{ background:#ff9800; color:white; }
-
-/* PANEL */
-.panel{
-background:white;
-margin-top:20px;
-padding:15px;
-border-radius:14px;
-box-shadow:0 6px 15px rgba(0,0,0,0.08);
-}
-
-/* INPUT */
-input{
-padding:10px;
-border-radius:10px;
-border:1px solid #ccc;
-width:60%;
-}
+.answered{background:#4caf50;color:white;}
 </style>
 </head>
 
@@ -158,170 +88,137 @@ width:60%;
 
 <!-- LOGIN -->
 <div id="loginBox">
-<h2>Advanced CBT System</h2>
-<input id="studentName" placeholder="Enter Name">
+<h2>Biochemistry CBT Exam</h2>
+<input id="name" placeholder="Enter Name">
 <br><br>
-<button onclick="startExam()">Start Exam</button>
+<button onclick="start()">Start Exam</button>
 </div>
 
 <!-- EXAM -->
-<div id="examArea" style="display:none;">
+<div id="exam" style="display:none;">
 
 <div class="top">
-<h1>Biochemistry CBT</h1>
-<h2 id="timer">20:00</h2>
+<h2>CBT Exam</h2>
+<div id="timer">20:00</div>
 </div>
 
 <div class="palette" id="palette"></div>
 
 <div class="box">
-<h3 id="qtext"></h3>
-<div id="opts"></div>
+<h3 id="q"></h3>
+<div id="options"></div>
 
 <div class="nav">
-<button onclick="prevQ()">Prev</button>
-<button onclick="nextQ()">Next</button>
-<button onclick="mark()">Mark</button>
-<button onclick="submitExam()">Submit</button>
+<button onclick="prev()">Prev</button>
+<button onclick="next()">Next</button>
+<button onclick="submit()">Submit</button>
 </div>
 </div>
 
-<div id="result" class="panel"></div>
+<div id="result"></div>
 
 </div>
 
 <script>
 
-/* QUESTIONS */
+/* ================= FULL 10 QUESTIONS ================= */
 const qs=[
 {q:"Rate limiting enzyme of glycolysis?",o:["Hexokinase","PFK-1","Pyruvate kinase","Aldolase"],a:1},
-{q:"Net ATP glycolysis?",o:["2","4","6","8"],a:0},
-{q:"G6PD deficiency affects?",o:["Glycolysis","HMP shunt","TCA","Gluconeogenesis"],a:1},
-{q:"Ketone body site?",o:["Liver","Brain","Muscle","Kidney"],a:0},
-{q:"Final ETC acceptor?",o:["NADH","O2","FADH2","CoQ"],a:1}
+{q:"Net ATP in glycolysis?",o:["2","4","6","8"],a:0},
+{q:"G6PD deficiency affects?",o:["Glycolysis","HMP shunt","TCA cycle","Gluconeogenesis"],a:1},
+{q:"Ketone body formation site?",o:["Liver","Brain","Muscle","Kidney"],a:0},
+{q:"Final electron acceptor in ETC?",o:["NADH","Oxygen","FADH2","Cytochrome c"],a:1},
+{q:"Uncoupler of oxidative phosphorylation?",o:["Cyanide","Rotenone","2,4-DNP","Malonate"],a:2},
+{q:"Km indicates?",o:["Enzyme affinity","Vmax","pH","Temperature"],a:0},
+{q:"Insulin deficiency leads to?",o:["Hypoglycemia","Diabetes mellitus","Glycogenesis","Ketolysis"],a:1},
+{q:"Rate limiting enzyme of cholesterol synthesis?",o:["HMG-CoA reductase","Lipase","Citrate synthase","Hexokinase"],a:0},
+{q:"End product of purine metabolism?",o:["Urea","Uric acid","Creatinine","Ammonia"],a:1}
 ];
 
-/* STATE */
-let idx=0;
+/* ================= STATE ================= */
+let i=0;
 let ans=Array(qs.length).fill(null);
-let status=Array(qs.length).fill("notvisited");
-let marked=Array(qs.length).fill(false);
 let t=1200;
 let timer;
 
-/* TIMER */
+/* ================= TIMER ================= */
 function startTimer(){
 timer=setInterval(()=>{
-if(t<=0){submitExam();return;}
-
+if(t<=0){submit();return;}
 t--;
-
-if(t<120) document.getElementById("timer").classList.add("warn");
-
 let m=Math.floor(t/60);
 let s=t%60;
 document.getElementById("timer").innerText=
 String(m).padStart(2,'0')+":"+String(s).padStart(2,'0');
-
 },1000);
 }
 
-/* RENDER */
-function renderQ(){
-
-status[idx] = ans[idx] != null ? "answered" : "visited";
-
-document.getElementById("qtext").innerText =
-(idx+1)+". "+qs[idx].q;
+/* ================= RENDER ================= */
+function render(){
+document.getElementById("q").innerText=(i+1)+". "+qs[i].q;
 
 let h="";
-qs[idx].o.forEach((o,i)=>{
-h+=`
-<button class="opt ${ans[idx]===i?'selected':''}"
-onclick="select(${i})">
+qs[i].o.forEach((o,j)=>{
+h+=`<button class="opt" onclick="pick(${j})">
 ${o}
 </button>`;
 });
 
-document.getElementById("opts").innerHTML=h;
+document.getElementById("options").innerHTML=h;
 renderPalette();
 }
 
-/* OPTIONS */
-function select(i){
-ans[idx]=i;
-renderQ();
+function pick(j){
+ans[i]=j;
+render();
 }
 
-/* NAV */
-function nextQ(){
-if(idx<qs.length-1) idx++;
-renderQ();
-}
+/* ================= NAV ================= */
+function next(){ if(i<qs.length-1)i++; render(); }
+function prev(){ if(i>0)i--; render(); }
 
-function prevQ(){
-if(idx>0) idx--;
-renderQ();
-}
-
-/* MARK */
-function mark(){
-marked[idx]=true;
-renderPalette();
-}
-
-/* PALETTE */
+/* ================= PALETTE ================= */
 function renderPalette(){
 let h="";
-qs.forEach((q,i)=>{
-let cls="notvisited";
-
-if(marked[i]) cls="marked";
-else if(ans[i]!=null) cls="answered";
-else if(status[i]=="visited") cls="visited";
-
-h+=`
-<button class="${cls}" onclick="jump(${i})">
-${i+1}
-</button>`;
+qs.forEach((q,idx)=>{
+h+=`<button class="${ans[idx]!=null?'answered':''}" onclick="jump(${idx})">${idx+1}</button>`;
 });
 document.getElementById("palette").innerHTML=h;
 }
 
-function jump(i){
-idx=i;
-renderQ();
-}
+function jump(x){ i=x; render(); }
 
-/* SUBMIT */
-function submitExam(){
+/* ================= SUBMIT ================= */
+function submit(){
 clearInterval(timer);
 
 let score=0;
-ans.forEach((a,i)=>{
-if(a===qs[i].a) score++;
+let review="";
+
+qs.forEach((q,idx)=>{
+if(ans[idx]===q.a) score++;
+else{
+review+=`<p>Q${idx+1}: Correct answer = ${q.o[q.a]}</p>`;
+}
 });
 
-let percent = (score/qs.length*100).toFixed(2);
-
 document.getElementById("result").innerHTML=`
-<h2>Result</h2>
-<p>Score: ${score}/${qs.length}</p>
-<p>Percentage: ${percent}%</p>
+<h2>Result: ${score}/${qs.length}</h2>
+<h3>Incorrect Review</h3>
+${review}
 `;
-
 }
 
-/* START */
-function startExam(){
-let name=document.getElementById("studentName").value;
+/* ================= START ================= */
+function start(){
+let name=document.getElementById("name").value;
 if(!name){alert("Enter name");return;}
 
 document.getElementById("loginBox").style.display="none";
-document.getElementById("examArea").style.display="block";
+document.getElementById("exam").style.display="block";
 
 startTimer();
-renderQ();
+render();
 }
 
 </script>
