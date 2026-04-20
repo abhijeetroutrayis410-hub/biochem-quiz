@@ -5,69 +5,29 @@
 <title>Biochemistry CBT Mock Test</title>
 
 <style>
-body{
-font-family:Arial;
-max-width:900px;
-margin:auto;
-padding:20px;
-}
-
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.palette button{
-width:42px;
-height:42px;
-margin:4px;
-border-radius:12px;
-}
-
-.answered{
-background:#c8f7c5;
-font-weight:bold;
-}
-
-.box{
-border:1px solid #ccc;
-padding:18px;
-border-radius:18px;
-margin-top:20px;
-}
-
-.opt{
-display:block;
-width:100%;
-padding:12px;
-margin:8px 0;
-border-radius:12px;
-border:1px solid #999;
-background:#fff;
-cursor:pointer;
-}
-
+body{font-family:Arial;max-width:900px;margin:auto;padding:20px;}
+.top{display:flex;justify-content:space-between;align-items:center;}
+.palette{display:grid;grid-template-columns:repeat(10, 1fr);gap:6px;margin:15px 0;}
+.palette button{width:100%;aspect-ratio:1;border-radius:8px;border:2px solid #999;font-weight:bold;cursor:pointer;}
+.not-visited{ background:#fff; }
+.not-answered{ background:#fff; border-color:#999; }
+.answered{ background:#c8f7c5; border-color:#2e7d32; }
+.marked{ background:#e1bee7; border-color:#6a1b9a; }
+.marked-answered{ background:#ffcdd2; border-color:#c62828; }
+.current{ box-shadow:0 0 0 3px #2196f3; }
+.legend{display:flex;flex-wrap:wrap;gap:15px;margin:10px 0;font-size:13px;}
+.legend-item{display:flex; align-items:center; gap:5px;}
+.legend-box{width:18px; height:18px; border:2px solid #999; border-radius:4px;}
+.box{border:1px solid #ccc;padding:18px;border-radius:18px;margin-top:10px;}
+.opt{display:block;width:100%;padding:12px;margin:8px 0;border-radius:12px;border:1px solid #999;background:#fff;cursor:pointer;text-align:left;}
 .opt:hover{ background:#f3f3f3; }
-
-.nav{
-display:flex;
-gap:10px;
-margin-top:20px;
-flex-wrap:wrap;
-}
-
-.panel{
-margin-top:20px;
-padding:15px;
-border:1px solid #ddd;
-border-radius:12px;
-}
-
-.small{
-font-size:14px;
-color:#444;
-}
+.opt:disabled{ cursor:not-allowed; opacity:0.6; }
+.opt.selected{ background:#c8f7c5; border-color:#2e7d32; font-weight:bold; }
+.nav{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+.nav button{padding:10px 16px;border-radius:8px;border:1px solid #666;cursor:pointer;}
+#markBtn{ background:#e1bee7; }
+.panel{margin-top:20px;padding:15px;border:1px solid #ddd;border-radius:12px;}
+.small{font-size:14px;color:#444;margin:4px 0;}
 </style>
 </head>
 
@@ -81,38 +41,39 @@ color:#444;
 </div>
 
 <div id="examArea" style="display:none;">
-
 <div class="top">
 <h1>Biochemistry CBT Mock</h1>
-<h2 id="timer">20:00</h2>
+<h2 id="timer">40:00</h2>
+</div>
+
+<div class="legend">
+<div class="legend-item"><div class="legend-box answered"></div>Answered</div>
+<div class="legend-item"><div class="legend-box not-answered"></div>Not Answered</div>
+<div class="legend-item"><div class="legend-box marked"></div>Marked</div>
+<div class="legend-item"><div class="legend-box marked-answered"></div>Marked & Answered</div>
 </div>
 
 <div class="palette" id="palette"></div>
 
 <div class="box">
-
 <h3 id="qtext"></h3>
 <div id="opts"></div>
-
 <div class="nav">
-<button onclick="prevQ()">Previous</button>
-<button onclick="nextQ()">Next</button>
-<button onclick="submitExam()">Submit</button>
-<button onclick="showReview()">Review Panel</button>
+<button id="prevBtn" onclick="prevQ()">Previous</button>
+<button id="markBtn" onclick="toggleMark()">Mark for Review & Next</button>
+<button id="clearBtn" onclick="clearResponse()">Clear Response</button>
+<button id="nextBtn" onclick="nextQ()">Save & Next</button>
+<button id="submitBtn" onclick="submitExam()">Submit</button>
 </div>
-
 </div>
 
 <div id="reviewPanel" class="panel"></div>
 <div id="analytics" class="panel"></div>
 <div id="leaderboard" class="panel"></div>
 <div id="result"></div>
-
 </div>
 
 <script>
-
-/* ================= QUESTIONS ================= */
 const qs=[
 {q:'Rate-limiting enzyme of glycolysis?',o:['Hexokinase','PFK-1','Pyruvate kinase','Aldolase'],a:1},
 {q:'Net ATP produced in glycolysis?',o:['2 ATP','4 ATP','6 ATP','8 ATP'],a:0},
@@ -123,230 +84,79 @@ const qs=[
 {q:'Km indicates?',o:['Enzyme affinity','Vmax','pH','Turnover number'],a:0},
 {q:'Deficiency of insulin causes?',o:['Glycogenesis','Diabetes mellitus','Ketolysis','Hypoglycemia'],a:1},
 {q:'Rate-limiting enzyme of cholesterol synthesis?',o:['HMG-CoA reductase','Lipase','Thiokinase','Citrate synthase'],a:0},
-{q:'End product of purine metabolism?',o:['Urea','Uric acid','Creatinine','Bilirubin'],a:1}
+{q:'End product of purine metabolism?',o:['Urea','Uric acid','Creatinine','Bilirubin'],a:1},
+{q:'Coenzyme form of Vitamin B1?',o:['NAD','FAD','TPP','FMN'],a:2},
+{q:'Primary bile acids are synthesized from?',o:['Amino acids','Cholesterol','Glucose','Fatty acids'],a:1},
+{q:'Which is a ketogenic amino acid?',o:['Alanine','Leucine','Glycine','Serine'],a:1},
+{q:'Enzyme deficient in Phenylketonuria?',o:['Tyrosinase','Phenylalanine hydroxylase','Homogentisate oxidase','Arginase'],a:1},
+{q:'Vitamin K dependent clotting factor?',o:['Factor V','Factor VII','Factor VIII','Factor XI'],a:1},
+{q:'Allosteric activator of PFK-1?',o:['ATP','Citrate','Fructose 2,6-bisphosphate','AMP'],a:3},
+{q:'Site of urea cycle?',o:['Liver mitochondria & cytosol','Kidney','Muscle','Brain'],a:0},
+{q:'Lipid storage disease due to sphingomyelinase deficiency?',o:['Tay-Sachs','Gaucher','Niemann-Pick','Fabry'],a:2},
+{q:'Normal fasting blood glucose level?',o:['40-60 mg/dL','70-100 mg/dL','120-150 mg/dL','160-200 mg/dL'],a:1},
+{q:'Component of complex II in ETC?',o:['NADH dehydrogenase','Succinate dehydrogenase','Cytochrome c oxidase','ATP synthase'],a:1}
 ];
 
-/* ================= TOPICS (for analytics only) ================= */
 const topics=[
-"Carbohydrate metabolism",
-"Carbohydrate metabolism",
-"Carbohydrate metabolism",
-"Lipid metabolism",
-"ETC",
-"ETC",
-"Enzymology",
-"Endocrine",
-"Lipid metabolism",
-"Nucleotide metabolism"
+"Carbohydrate metabolism","Carbohydrate metabolism","Carbohydrate metabolism",
+"Lipid metabolism","ETC","ETC","Enzymology","Endocrine","Lipid metabolism","Nucleotide metabolism",
+"Vitamins","Lipid metabolism","Amino acid metabolism","Amino acid metabolism",
+"Vitamins","Carbohydrate metabolism","Amino acid metabolism","Lipid metabolism",
+"Clinical biochemistry","ETC"
 ];
 
-/* ================= STATE ================= */
 let idx=0;
 let ans=Array(qs.length).fill(null);
-let t=1200;
+let marked=Array(qs.length).fill(false);
+let visited=Array(qs.length).fill(false);
+let t=2400;
 let submitted=false;
 let timerInterval;
+let studentName = "";
 
-/* ================= AUTO SAVE ================= */
 function saveState(){
-localStorage.setItem("cbt_state", JSON.stringify({
-idx, ans, t, submitted
-}));
+localStorage.setItem("cbt_state", JSON.stringify({idx,ans,marked,visited,t,submitted,studentName}));
 }
 
-/* ================= LOAD STATE ================= */
 function loadState(){
 let data=localStorage.getItem("cbt_state");
 if(data){
 let d=JSON.parse(data);
-idx=d.idx;
-ans=d.ans;
-t=d.t;
-submitted=d.submitted;
+idx=d.idx; ans=d.ans; marked=d.marked; visited=d.visited;
+t=d.t; submitted=d.submitted; studentName=d.studentName;
+return true;
 }
+return false;
 }
 
-/* ================= TIMER ================= */
+function resetState(){
+idx=0; ans=Array(qs.length).fill(null); marked=Array(qs.length).fill(false);
+visited=Array(qs.length).fill(false); t=2400; submitted=false;
+clearInterval(timerInterval); localStorage.removeItem("cbt_state");
+}
+
 function startTimer(){
-
+updateTimerDisplay();
+if(submitted) return;
 timerInterval=setInterval(()=>{
-
-if(t<=0){
-clearInterval(timerInterval);
-submitExam();
-return;
-}
-
-t--;
-saveState();
-
-let m=Math.floor(t/60);
-let s=t%60;
-
-document.getElementById('timer').innerText=
-(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
-
+if(t<=0){ clearInterval(timerInterval); submitExam(); return; }
+t--; saveState(); updateTimerDisplay();
 },1000);
-
 }
 
-/* ================= PALLET ================= */
+function updateTimerDisplay(){
+let m=Math.floor(t/60), s=t%60;
+document.getElementById('timer').innerText=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+}
+
 function renderPalette(){
-
 let h='';
 qs.forEach((q,i)=>{
-h+=`
-<button onclick="goQ(${i})" class="${ans[i]!=null?'answered':''}">
-${i+1}
-</button>`;
-});
-
-document.getElementById('palette').innerHTML=h;
-
-}
-
-/* ================= QUESTION ================= */
-function renderQ(){
-
-document.getElementById('qtext').innerText=
-(idx+1)+'. '+qs[idx].q;
-
-let h='';
-qs[idx].o.forEach((v,j)=>{
-h+=`
-<button class="opt" onclick="pick(${j})">
-${String.fromCharCode(65+j)}. ${v}
-${ans[idx]===j?' ✓ Selected':''}
-</button>`;
-});
-
-document.getElementById('opts').innerHTML=h;
-
-renderPalette();
-saveState();
-
-}
-
-/* ================= ANSWER ================= */
-function pick(j){
-if(submitted) return;
-ans[idx]=j;
-renderQ();
-}
-
-/* ================= NAV ================= */
-function nextQ(){ if(idx<qs.length-1) idx++; renderQ(); }
-function prevQ(){ if(idx>0) idx--; renderQ(); }
-function goQ(i){ idx=i; renderQ(); }
-
-/* ================= REVIEW PANEL ================= */
-function showReview(){
-
-let h="<h3>Question Review Panel</h3>";
-
-qs.forEach((q,i)=>{
-h+=`
-<div class="small">
-<b>Q${i+1}</b> - ${ans[i]!=null?'Answered':'Not Answered'}
-<button onclick="goQ(${i})">Go</button>
-</div>`;
-});
-
-document.getElementById('reviewPanel').innerHTML=h;
-
-}
-
-/* ================= ANALYTICS ================= */
-function showAnalytics(){
-
-let weak={};
-
-qs.forEach((q,i)=>{
-if(ans[i]!==q.a){
-let t=topics[i];
-weak[t]=(weak[t]||0)+1;
-}
-});
-
-let h="<h3>Weak Topics Analysis</h3>";
-
-for(let k in weak){
-h+=`<div>${k}: ${weak[k]} wrong</div>`;
-}
-
-document.getElementById('analytics').innerHTML=h;
-
-}
-
-/* ================= LEADERBOARD ================= */
-function updateLeaderboard(score,name){
-
-let data=JSON.parse(localStorage.getItem("leaderboard")||"[]");
-
-data.push({name,score});
-
-data.sort((a,b)=>b.score-a.score);
-
-data=data.slice(0,5);
-
-localStorage.setItem("leaderboard",JSON.stringify(data));
-
-let h="<h3>Leaderboard</h3>";
-
-data.forEach((d,i)=>{
-h+=`<div>${i+1}. ${d.name} - ${d.score}</div>`;
-});
-
-document.getElementById('leaderboard').innerHTML=h;
-
-}
-
-/* ================= SUBMIT ================= */
-function submitExam(){
-
-if(submitted) return;
-submitted=true;
-
-clearInterval(timerInterval);
-
-let score=0;
-
-ans.forEach((v,i)=>{
-if(v===qs[i].a) score++;
-});
-
-let name=document.getElementById('studentName').value;
-
-document.getElementById('result').innerHTML=
-'<h2>Score: '+score+'/'+qs.length+'</h2>';
-
-updateLeaderboard(score,name);
-showAnalytics();
-saveState();
-
-}
-
-/* ================= START ================= */
-function startExam(){
-
-let name=document.getElementById('studentName').value;
-if(name==""){ alert("Enter name"); return; }
-
-document.getElementById('loginBox').style.display='none';
-document.getElementById('examArea').style.display='block';
-
-document.querySelector('h1').innerHTML=
-'Biochemistry CBT Mock<br><small>'+name+'</small>';
-
-loadState();
-
-startTimer();
-renderQ();
-showReview();
-
-}
-
-</script>
-
-</body>
-</html>
+let cls = '';
+if(i===idx) cls+=' current';
+if(marked[i] && ans[i]!=null) cls+=' marked-answered';
+else if(marked[i]) cls+=' marked';
+else if(ans[i]!=null) cls+=' answered';
+else if(!visited[i]) cls+=' not-visited';
+else cls+=' not-answered';
+h+=`<button onclick="
