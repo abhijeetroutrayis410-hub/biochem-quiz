@@ -2,55 +2,174 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Biochemistry CBT Mock Test</title>
+<title>Advanced Biochemistry CBT</title>
 
 <style>
-body{font-family:Arial;max-width:900px;margin:auto;padding:20px;}
-.top{display:flex;justify-content:space-between;align-items:center;}
-.palette{display:grid;grid-template-columns:repeat(10, 1fr);gap:6px;margin:15px 0;}
-.palette button{width:100%;aspect-ratio:1;border-radius:8px;border:2px solid #999;font-weight:bold;cursor:pointer;}
-.not-visited{ background:#fff; }
-.not-answered{ background:#fff; border-color:#999; }
-.answered{ background:#c8f7c5; border-color:#2e7d32; }
-.marked{ background:#e1bee7; border-color:#6a1b9a; }
-.marked-answered{ background:#ffcdd2; border-color:#c62828; }
-.current{ box-shadow:0 0 0 3px #2196f3; }
-.legend{display:flex;flex-wrap:wrap;gap:15px;margin:10px 0;font-size:13px;}
-.legend-item{display:flex; align-items:center; gap:5px;}
-.legend-box{width:18px; height:18px; border:2px solid #999; border-radius:4px;}
-.box{border:1px solid #ccc;padding:18px;border-radius:18px;margin-top:10px;}
-.opt{display:block;width:100%;padding:12px;margin:8px 0;border-radius:12px;border:1px solid #999;background:#fff;cursor:pointer;text-align:left;}
-.opt:hover{ background:#f3f3f3; }
-.opt:disabled{ cursor:not-allowed; opacity:0.6; }
-.opt.selected{ background:#c8f7c5; border-color:#2e7d32; font-weight:bold; }
-.nav{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
-.nav button{padding:10px 16px;border-radius:8px;border:1px solid #666;cursor:pointer;}
-#markBtn{ background:#e1bee7; }
-.panel{margin-top:20px;padding:15px;border:1px solid #ddd;border-radius:12px;}
-.small{font-size:14px;color:#444;margin:4px 0;}
+body{
+font-family:Segoe UI, Arial;
+max-width:950px;
+margin:auto;
+padding:20px;
+background:linear-gradient(135deg,#eef2ff,#e8f0ff);
+}
+
+/* LOGIN */
+#loginBox{
+background:white;
+padding:25px;
+border-radius:16px;
+text-align:center;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* HEADER */
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:white;
+padding:12px 18px;
+border-radius:14px;
+box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+
+h1{
+color:#2b4eff;
+margin:0;
+}
+
+/* TIMER */
+#timer{
+padding:8px 14px;
+border-radius:10px;
+font-weight:bold;
+background:#2b4eff;
+color:white;
+transition:0.3s;
+}
+
+/* WARNING TIMER */
+.warn{
+background:#ff3b3b !important;
+}
+
+/* BOX */
+.box{
+background:white;
+padding:20px;
+border-radius:16px;
+margin-top:20px;
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+#qtext{
+font-size:18px;
+font-weight:600;
+}
+
+/* OPTIONS */
+.opt{
+display:block;
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:10px;
+border:2px solid #ddd;
+cursor:pointer;
+background:white;
+transition:0.2s;
+}
+
+.opt:hover{
+border-color:#2b4eff;
+background:#f3f7ff;
+}
+
+.selected{
+background:#dbe7ff !important;
+border-color:#2b4eff !important;
+}
+
+/* NAV */
+.nav{
+display:flex;
+gap:10px;
+margin-top:15px;
+flex-wrap:wrap;
+}
+
+.nav button{
+padding:10px 14px;
+border:none;
+border-radius:10px;
+background:#2b4eff;
+color:white;
+cursor:pointer;
+font-weight:600;
+}
+
+.nav button:hover{
+background:#1f39c8;
+}
+
+/* PALETTE */
+.palette{
+display:flex;
+flex-wrap:wrap;
+gap:6px;
+margin-top:15px;
+}
+
+.palette button{
+width:40px;
+height:40px;
+border-radius:10px;
+border:none;
+cursor:pointer;
+font-weight:bold;
+}
+
+/* STATUS COLORS */
+.notvisited{ background:#e0e0e0; }
+.visited{ background:#ffd966; }
+.answered{ background:#4caf50; color:white; }
+.marked{ background:#ff9800; color:white; }
+
+/* PANEL */
+.panel{
+background:white;
+margin-top:20px;
+padding:15px;
+border-radius:14px;
+box-shadow:0 6px 15px rgba(0,0,0,0.08);
+}
+
+/* INPUT */
+input{
+padding:10px;
+border-radius:10px;
+border:1px solid #ccc;
+width:60%;
+}
 </style>
 </head>
 
 <body>
 
+<!-- LOGIN -->
 <div id="loginBox">
-<h2>Enter Candidate Name</h2>
-<input id="studentName" placeholder="Your name">
+<h2>Advanced CBT System</h2>
+<input id="studentName" placeholder="Enter Name">
 <br><br>
 <button onclick="startExam()">Start Exam</button>
 </div>
 
+<!-- EXAM -->
 <div id="examArea" style="display:none;">
-<div class="top">
-<h1>Biochemistry CBT Mock</h1>
-<h2 id="timer">40:00</h2>
-</div>
 
-<div class="legend">
-<div class="legend-item"><div class="legend-box answered"></div>Answered</div>
-<div class="legend-item"><div class="legend-box not-answered"></div>Not Answered</div>
-<div class="legend-item"><div class="legend-box marked"></div>Marked</div>
-<div class="legend-item"><div class="legend-box marked-answered"></div>Marked & Answered</div>
+<div class="top">
+<h1>Biochemistry CBT</h1>
+<h2 id="timer">20:00</h2>
 </div>
 
 <div class="palette" id="palette"></div>
@@ -58,105 +177,154 @@ body{font-family:Arial;max-width:900px;margin:auto;padding:20px;}
 <div class="box">
 <h3 id="qtext"></h3>
 <div id="opts"></div>
+
 <div class="nav">
-<button id="prevBtn" onclick="prevQ()">Previous</button>
-<button id="markBtn" onclick="toggleMark()">Mark for Review & Next</button>
-<button id="clearBtn" onclick="clearResponse()">Clear Response</button>
-<button id="nextBtn" onclick="nextQ()">Save & Next</button>
-<button id="submitBtn" onclick="submitExam()">Submit</button>
+<button onclick="prevQ()">Prev</button>
+<button onclick="nextQ()">Next</button>
+<button onclick="mark()">Mark</button>
+<button onclick="submitExam()">Submit</button>
 </div>
 </div>
 
-<div id="reviewPanel" class="panel"></div>
-<div id="analytics" class="panel"></div>
-<div id="leaderboard" class="panel"></div>
-<div id="result"></div>
+<div id="result" class="panel"></div>
+
 </div>
 
 <script>
+
+/* QUESTIONS */
 const qs=[
-{q:'Rate-limiting enzyme of glycolysis?',o:['Hexokinase','PFK-1','Pyruvate kinase','Aldolase'],a:1},
-{q:'Net ATP produced in glycolysis?',o:['2 ATP','4 ATP','6 ATP','8 ATP'],a:0},
-{q:'G6PD deficiency affects?',o:['Glycolysis','HMP shunt','TCA cycle','Gluconeogenesis'],a:1},
-{q:'Site of ketone body formation?',o:['Liver','Brain','Kidney','Muscle'],a:0},
-{q:'Final electron acceptor in ETC?',o:['NADH','Oxygen','FADH2','Cytochrome c'],a:1},
-{q:'Uncoupler of oxidative phosphorylation?',o:['Cyanide','Rotenone','2,4-DNP','Malonate'],a:2},
-{q:'Km indicates?',o:['Enzyme affinity','Vmax','pH','Turnover number'],a:0},
-{q:'Deficiency of insulin causes?',o:['Glycogenesis','Diabetes mellitus','Ketolysis','Hypoglycemia'],a:1},
-{q:'Rate-limiting enzyme of cholesterol synthesis?',o:['HMG-CoA reductase','Lipase','Thiokinase','Citrate synthase'],a:0},
-{q:'End product of purine metabolism?',o:['Urea','Uric acid','Creatinine','Bilirubin'],a:1},
-{q:'Coenzyme form of Vitamin B1?',o:['NAD','FAD','TPP','FMN'],a:2},
-{q:'Primary bile acids are synthesized from?',o:['Amino acids','Cholesterol','Glucose','Fatty acids'],a:1},
-{q:'Which is a ketogenic amino acid?',o:['Alanine','Leucine','Glycine','Serine'],a:1},
-{q:'Enzyme deficient in Phenylketonuria?',o:['Tyrosinase','Phenylalanine hydroxylase','Homogentisate oxidase','Arginase'],a:1},
-{q:'Vitamin K dependent clotting factor?',o:['Factor V','Factor VII','Factor VIII','Factor XI'],a:1},
-{q:'Allosteric activator of PFK-1?',o:['ATP','Citrate','Fructose 2,6-bisphosphate','AMP'],a:3},
-{q:'Site of urea cycle?',o:['Liver mitochondria & cytosol','Kidney','Muscle','Brain'],a:0},
-{q:'Lipid storage disease due to sphingomyelinase deficiency?',o:['Tay-Sachs','Gaucher','Niemann-Pick','Fabry'],a:2},
-{q:'Normal fasting blood glucose level?',o:['40-60 mg/dL','70-100 mg/dL','120-150 mg/dL','160-200 mg/dL'],a:1},
-{q:'Component of complex II in ETC?',o:['NADH dehydrogenase','Succinate dehydrogenase','Cytochrome c oxidase','ATP synthase'],a:1}
+{q:"Rate limiting enzyme of glycolysis?",o:["Hexokinase","PFK-1","Pyruvate kinase","Aldolase"],a:1},
+{q:"Net ATP glycolysis?",o:["2","4","6","8"],a:0},
+{q:"G6PD deficiency affects?",o:["Glycolysis","HMP shunt","TCA","Gluconeogenesis"],a:1},
+{q:"Ketone body site?",o:["Liver","Brain","Muscle","Kidney"],a:0},
+{q:"Final ETC acceptor?",o:["NADH","O2","FADH2","CoQ"],a:1}
 ];
 
-const topics=[
-"Carbohydrate metabolism","Carbohydrate metabolism","Carbohydrate metabolism",
-"Lipid metabolism","ETC","ETC","Enzymology","Endocrine","Lipid metabolism","Nucleotide metabolism",
-"Vitamins","Lipid metabolism","Amino acid metabolism","Amino acid metabolism",
-"Vitamins","Carbohydrate metabolism","Amino acid metabolism","Lipid metabolism",
-"Clinical biochemistry","ETC"
-];
-
+/* STATE */
 let idx=0;
 let ans=Array(qs.length).fill(null);
+let status=Array(qs.length).fill("notvisited");
 let marked=Array(qs.length).fill(false);
-let visited=Array(qs.length).fill(false);
-let t=2400;
-let submitted=false;
-let timerInterval;
-let studentName = "";
+let t=1200;
+let timer;
 
-function saveState(){
-localStorage.setItem("cbt_state", JSON.stringify({idx,ans,marked,visited,t,submitted,studentName}));
-}
-
-function loadState(){
-let data=localStorage.getItem("cbt_state");
-if(data){
-let d=JSON.parse(data);
-idx=d.idx; ans=d.ans; marked=d.marked; visited=d.visited;
-t=d.t; submitted=d.submitted; studentName=d.studentName;
-return true;
-}
-return false;
-}
-
-function resetState(){
-idx=0; ans=Array(qs.length).fill(null); marked=Array(qs.length).fill(false);
-visited=Array(qs.length).fill(false); t=2400; submitted=false;
-clearInterval(timerInterval); localStorage.removeItem("cbt_state");
-}
-
+/* TIMER */
 function startTimer(){
-updateTimerDisplay();
-if(submitted) return;
-timerInterval=setInterval(()=>{
-if(t<=0){ clearInterval(timerInterval); submitExam(); return; }
-t--; saveState(); updateTimerDisplay();
+timer=setInterval(()=>{
+if(t<=0){submitExam();return;}
+
+t--;
+
+if(t<120) document.getElementById("timer").classList.add("warn");
+
+let m=Math.floor(t/60);
+let s=t%60;
+document.getElementById("timer").innerText=
+String(m).padStart(2,'0')+":"+String(s).padStart(2,'0');
+
 },1000);
 }
 
-function updateTimerDisplay(){
-let m=Math.floor(t/60), s=t%60;
-document.getElementById('timer').innerText=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+/* RENDER */
+function renderQ(){
+
+status[idx] = ans[idx] != null ? "answered" : "visited";
+
+document.getElementById("qtext").innerText =
+(idx+1)+". "+qs[idx].q;
+
+let h="";
+qs[idx].o.forEach((o,i)=>{
+h+=`
+<button class="opt ${ans[idx]===i?'selected':''}"
+onclick="select(${i})">
+${o}
+</button>`;
+});
+
+document.getElementById("opts").innerHTML=h;
+renderPalette();
 }
 
+/* OPTIONS */
+function select(i){
+ans[idx]=i;
+renderQ();
+}
+
+/* NAV */
+function nextQ(){
+if(idx<qs.length-1) idx++;
+renderQ();
+}
+
+function prevQ(){
+if(idx>0) idx--;
+renderQ();
+}
+
+/* MARK */
+function mark(){
+marked[idx]=true;
+renderPalette();
+}
+
+/* PALETTE */
 function renderPalette(){
-let h='';
+let h="";
 qs.forEach((q,i)=>{
-let cls = '';
-if(i===idx) cls+=' current';
-if(marked[i] && ans[i]!=null) cls+=' marked-answered';
-else if(marked[i]) cls+=' marked';
-else if(ans[i]!=null) cls+=' answered';
-else if(!visited[i]) cls+=' not-visited';
-else cls+=' not-answered';
-h+=`<button onclick="
+let cls="notvisited";
+
+if(marked[i]) cls="marked";
+else if(ans[i]!=null) cls="answered";
+else if(status[i]=="visited") cls="visited";
+
+h+=`
+<button class="${cls}" onclick="jump(${i})">
+${i+1}
+</button>`;
+});
+document.getElementById("palette").innerHTML=h;
+}
+
+function jump(i){
+idx=i;
+renderQ();
+}
+
+/* SUBMIT */
+function submitExam(){
+clearInterval(timer);
+
+let score=0;
+ans.forEach((a,i)=>{
+if(a===qs[i].a) score++;
+});
+
+let percent = (score/qs.length*100).toFixed(2);
+
+document.getElementById("result").innerHTML=`
+<h2>Result</h2>
+<p>Score: ${score}/${qs.length}</p>
+<p>Percentage: ${percent}%</p>
+`;
+
+}
+
+/* START */
+function startExam(){
+let name=document.getElementById("studentName").value;
+if(!name){alert("Enter name");return;}
+
+document.getElementById("loginBox").style.display="none";
+document.getElementById("examArea").style.display="block";
+
+startTimer();
+renderQ();
+}
+
+</script>
+
+</body>
+</html>
