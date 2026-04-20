@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Biochemistry CBT Final</title>
+<title>Biochemistry CBT Fixed</title>
 
 <style>
 body{
@@ -56,9 +56,20 @@ border-radius:10px;
 border:1px solid #ccc;
 cursor:pointer;
 background:white;
+transition:0.2s;
 }
 
-.opt:hover{background:#f3f7ff}
+.opt:hover{
+background:#f3f7ff;
+border-color:#2b4eff;
+}
+
+/* ✅ SELECTED OPTION FIX */
+.selected{
+background:#2b4eff !important;
+color:white !important;
+border-color:#2b4eff !important;
+}
 
 .nav button{
 margin:5px;
@@ -76,7 +87,6 @@ height:38px;
 margin:4px;
 border-radius:8px;
 border:none;
-background:#ddd;
 cursor:pointer;
 }
 
@@ -86,7 +96,6 @@ cursor:pointer;
 
 <body>
 
-<!-- LOGIN -->
 <div id="loginBox">
 <h2>Biochemistry CBT Exam</h2>
 <input id="name" placeholder="Enter Name">
@@ -94,7 +103,6 @@ cursor:pointer;
 <button onclick="start()">Start Exam</button>
 </div>
 
-<!-- EXAM -->
 <div id="exam" style="display:none;">
 
 <div class="top">
@@ -121,7 +129,7 @@ cursor:pointer;
 
 <script>
 
-/* ================= FULL 10 QUESTIONS ================= */
+/* ================= QUESTIONS (10) ================= */
 const qs=[
 {q:"Rate limiting enzyme of glycolysis?",o:["Hexokinase","PFK-1","Pyruvate kinase","Aldolase"],a:1},
 {q:"Net ATP in glycolysis?",o:["2","4","6","8"],a:0},
@@ -145,21 +153,31 @@ let timer;
 function startTimer(){
 timer=setInterval(()=>{
 if(t<=0){submit();return;}
+
 t--;
+
 let m=Math.floor(t/60);
 let s=t%60;
+
 document.getElementById("timer").innerText=
 String(m).padStart(2,'0')+":"+String(s).padStart(2,'0');
+
 },1000);
 }
 
 /* ================= RENDER ================= */
 function render(){
+
 document.getElementById("q").innerText=(i+1)+". "+qs[i].q;
 
 let h="";
+
 qs[i].o.forEach((o,j)=>{
-h+=`<button class="opt" onclick="pick(${j})">
+
+let sel = (ans[i]===j) ? "selected" : "";
+
+h+=`
+<button class="opt ${sel}" onclick="pick(${j})">
 ${o}
 </button>`;
 });
@@ -168,6 +186,7 @@ document.getElementById("options").innerHTML=h;
 renderPalette();
 }
 
+/* ================= SELECT ANSWER ================= */
 function pick(j){
 ans[i]=j;
 render();
@@ -180,9 +199,14 @@ function prev(){ if(i>0)i--; render(); }
 /* ================= PALETTE ================= */
 function renderPalette(){
 let h="";
+
 qs.forEach((q,idx)=>{
-h+=`<button class="${ans[idx]!=null?'answered':''}" onclick="jump(${idx})">${idx+1}</button>`;
+h+=`
+<button class="${ans[idx]!=null?'answered':''}" onclick="jump(${idx})">
+${idx+1}
+</button>`;
 });
+
 document.getElementById("palette").innerHTML=h;
 }
 
@@ -193,19 +217,13 @@ function submit(){
 clearInterval(timer);
 
 let score=0;
-let review="";
 
 qs.forEach((q,idx)=>{
 if(ans[idx]===q.a) score++;
-else{
-review+=`<p>Q${idx+1}: Correct answer = ${q.o[q.a]}</p>`;
-}
 });
 
 document.getElementById("result").innerHTML=`
 <h2>Result: ${score}/${qs.length}</h2>
-<h3>Incorrect Review</h3>
-${review}
 `;
 }
 
